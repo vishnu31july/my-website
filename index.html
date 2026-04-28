@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vishnu — IC Design Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --border: #1e1e2e;
+      --accent: #c8f560;
+      --accent2: #60d5f5;
+      --accent3: #f560a8;
+      --text: #e8e8f0;
+      --muted: #6a6a8a;
+      --card: #13131f;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CUSTOM CURSOR */
+    .cursor {
+      position: fixed; top: 0; left: 0;
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed; top: 0; left: 0;
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.18s ease, opacity 0.2s;
+      opacity: 0.5;
+      mix-blend-mode: difference;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 4rem;
+      z-index: 100;
+      background: linear-gradient(to bottom, rgba(10,10,15,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      gap: 4rem;
+    }
+
+    .hero-grid-line {
+      position: absolute; top: 0; left: 50%;
+      width: 1px; height: 100%;
+      background: linear-gradient(to bottom, transparent, var(--border) 30%, var(--border) 70%, transparent);
+      opacity: 0.4;
+    }
+
+    .hero-left { position: relative; }
+    .hero-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block; width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      margin-bottom: 2rem;
+    }
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+      display: block;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 400px;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-group { display: flex; gap: 1rem; align-items: center; }
+    .btn-primary {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-weight: 700;
+      border: none; cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: #d8ff70; transform: translateY(-2px); }
+    .btn-secondary {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--text); }
+
+    /* CHIP DIAGRAM (right side) */
+    .hero-right {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .chip-visual {
+      width: 340px; height: 340px;
+      position: relative;
+    }
+    .chip-svg { width: 100%; height: 100%; }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      margin-top: 4rem;
+    }
+    .stat {
+      padding: 2.5rem 4rem;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--accent);
+      display: flex; align-items: flex-start; gap: 0.2rem;
+    }
+    .stat-num sup {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      margin-top: 0.4rem;
+      color: var(--accent2);
+    }
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-top: 0.5rem;
+    }
+
+    /* SECTION SHARED */
+    section { position: relative; z-index: 1; }
+    .section-header {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent3);
+      letter-spacing: 0.15em;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.02em;
+    }
+    .section-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+
+    /* ABOUT */
+    #about {
+      padding: 8rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+      border-top: 1px solid var(--border);
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .about-text p strong { color: var(--text); font-weight: 600; }
+
+    .skills-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .skill-cell {
+      background: var(--card);
+      padding: 1.5rem;
+      transition: background 0.2s;
+    }
+    .skill-cell:hover { background: #1a1a28; }
+    .skill-category {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.8rem;
+    }
+    .skill-items {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+    }
+    .skill-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .skill-cell:hover .skill-tag { border-color: #2e2e4e; color: var(--text); }
+
+    /* PROJECTS */
+    #projects {
+      padding: 8rem 4rem;
+      border-top: 1px solid var(--border);
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .project-card {
+      background: var(--card);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .project-card:hover { background: #16162a; }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--border);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+    }
+    .project-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+    .project-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .project-tech {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin-bottom: 2rem;
+    }
+    .tech-chip {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--accent);
+      border: 1px solid rgba(200,245,96,0.25);
+      padding: 0.2rem 0.6rem;
+      letter-spacing: 0.05em;
+    }
+    .project-arrow {
+      position: absolute; bottom: 2rem; right: 2rem;
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 1rem;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .project-card:hover .project-arrow {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translate(2px, -2px);
+    }
+
+    /* EXPERIENCE TIMELINE */
+    #experience {
+      padding: 8rem 4rem;
+      border-top: 1px solid var(--border);
+    }
+    .timeline {
+      position: relative;
+      padding-left: 3rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 0; top: 0;
+      width: 1px; height: 100%;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 4rem;
+      padding-left: 2rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: -0.45rem; top: 0.4rem;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .timeline-date {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .timeline-role {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
+    }
+    .timeline-company {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .timeline-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 680px;
+    }
+
+    /* CONTACT */
+    #contact {
+      padding: 8rem 4rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+    .contact-left h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .contact-left h2 em { font-style: italic; color: var(--accent); }
+    .contact-left p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem;
+      text-decoration: none;
+      padding: 1rem 1.5rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+    }
+    .contact-link:hover { border-color: var(--accent); background: rgba(200,245,96,0.04); }
+    .contact-link-icon { color: var(--accent); font-size: 1rem; }
+
+    .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-group label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .form-group input, .form-group textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.9rem 1.2rem;
+      outline: none;
+      resize: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--accent);
+    }
+    .form-submit {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background 0.2s, transform 0.2s;
+      align-self: flex-start;
+    }
+    .form-submit:hover { background: #d8ff70; transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes dash {
+      from { stroke-dashoffset: 300; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .hero-left > * { animation: fadeUp 0.8s ease both; }
+    .hero-tag { animation-delay: 0.1s; }
+    h1 { animation-delay: 0.2s; }
+    .hero-desc { animation-delay: 0.35s; }
+    .btn-group { animation-delay: 0.5s; }
+    .hero-right { animation: scaleIn 1s ease 0.3s both; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CHIP SVG ANIMATIONS */
+    .chip-outer-ring { animation: spin 40s linear infinite; transform-origin: center; }
+    .chip-pulse-1 { animation: pulse-ring 3s ease-in-out infinite; }
+    .chip-pulse-2 { animation: pulse-ring 3s ease-in-out 1s infinite; }
+    .chip-trace { animation: dash 3s ease-out 0.5s both; stroke-dasharray: 300; }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      animation: fadeUp 1s ease 0.8s both;
+    }
+    .scroll-indicator span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: dash 2s ease-in-out infinite;
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      #hero { grid-template-columns: 1fr; padding: 7rem 2rem 2rem; gap: 2rem; }
+      .hero-right { display: none; }
+      .hero-grid-line { display: none; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem; }
+      #about, #contact { grid-template-columns: 1fr; padding: 4rem 2rem; gap: 3rem; }
+      #projects { padding: 4rem 2rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      #experience { padding: 4rem 2rem; }
+      footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">V.</div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-line"></div>
+
+    <div class="hero-left">
+      <div class="hero-tag">IC Design Engineer</div>
+      <h1>
+        Vishnu<br>
+        <em>Designs</em><br>
+        Silicon
+      </h1>
+      <p class="hero-desc">
+        Specializing in CMOS design, mixed-signal circuits, and high-performance digital architectures. From transistor-level analog to RTL — bridging the gap between physics and computation.
+      </p>
+      <div class="btn-group">
+        <a href="#projects" class="btn-primary">View Projects</a>
+        <a href="#contact" class="btn-secondary">
+          Let's connect <span>→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="chip-visual">
+        <svg class="chip-svg" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer decoration ring -->
+          <circle cx="170" cy="170" r="155" stroke="#1e1e2e" stroke-width="1" class="chip-outer-ring" stroke-dasharray="6 4"/>
+          <!-- Pulse rings -->
+          <circle cx="170" cy="170" r="130" stroke="#c8f560" stroke-width="0.5" class="chip-pulse-1"/>
+          <circle cx="170" cy="170" r="110" stroke="#60d5f5" stroke-width="0.5" class="chip-pulse-2"/>
+
+          <!-- Chip body -->
+          <rect x="80" y="80" width="180" height="180" rx="8" fill="#13131f" stroke="#2a2a3e" stroke-width="1.5"/>
+
+          <!-- Inner die -->
+          <rect x="100" y="100" width="140" height="140" rx="4" fill="#0f0f1a" stroke="#1e1e2e" stroke-width="1"/>
+
+          <!-- Functional blocks -->
+          <rect x="108" y="108" width="55" height="40" rx="2" fill="#1a1a2e" stroke="#c8f560" stroke-width="0.8"/>
+          <text x="135" y="133" fill="#c8f560" font-family="monospace" font-size="7" text-anchor="middle">ALU</text>
+
+          <rect x="177" y="108" width="55" height="40" rx="2" fill="#1a1a2e" stroke="#60d5f5" stroke-width="0.8"/>
+          <text x="204" y="133" fill="#60d5f5" font-family="monospace" font-size="7" text-anchor="middle">PLL</text>
+
+          <rect x="108" y="162" width="55" height="40" rx="2" fill="#1a1a2e" stroke="#f560a8" stroke-width="0.8"/>
+          <text x="135" y="187" fill="#f560a8" font-family="monospace" font-size="7" text-anchor="middle">DAC</text>
+
+          <rect x="177" y="162" width="55" height="40" rx="2" fill="#1a1a2e" stroke="#c8f560" stroke-width="0.8"/>
+          <text x="204" y="187" fill="#c8f560" font-family="monospace" font-size="7" text-anchor="middle">SRAM</text>
+
+          <!-- Bus traces -->
+          <rect x="108" y="208" width="124" height="24" rx="2" fill="#13131f" stroke="#1e1e2e" stroke-width="0.8"/>
+          <text x="170" y="224" fill="#6a6a8a" font-family="monospace" font-size="6" text-anchor="middle">DATA BUS</text>
+          <line x1="120" y1="208" x2="120" y2="232" stroke="#2a2a3e" stroke-width="0.5"/>
+          <line x1="145" y1="208" x2="145" y2="232" stroke="#2a2a3e" stroke-width="0.5"/>
+          <line x1="170" y1="208" x2="170" y2="232" stroke="#2a2a3e" stroke-width="0.5"/>
+          <line x1="195" y1="208" x2="195" y2="232" stroke="#2a2a3e" stroke-width="0.5"/>
+          <line x1="220" y1="208" x2="220" y2="232" stroke="#2a2a3e" stroke-width="0.5"/>
+
+          <!-- Pins - top -->
+          <rect x="115" y="72" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="130" y="72" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="145" y="72" width="6" height="8" rx="1" fill="#c8f560"/>
+          <rect x="160" y="72" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="175" y="72" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="190" y="72" width="6" height="8" rx="1" fill="#60d5f5"/>
+          <rect x="205" y="72" width="6" height="8" rx="1" fill="#6a6a8a"/>
+
+          <!-- Pins - bottom -->
+          <rect x="115" y="260" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="130" y="260" width="6" height="8" rx="1" fill="#f560a8"/>
+          <rect x="145" y="260" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="160" y="260" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="175" y="260" width="6" height="8" rx="1" fill="#c8f560"/>
+          <rect x="190" y="260" width="6" height="8" rx="1" fill="#6a6a8a"/>
+          <rect x="205" y="260" width="6" height="8" rx="1" fill="#6a6a8a"/>
+
+          <!-- Pins - left -->
+          <rect x="72" y="115" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="72" y="135" width="8" height="6" rx="1" fill="#c8f560"/>
+          <rect x="72" y="155" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="72" y="175" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="72" y="195" width="8" height="6" rx="1" fill="#60d5f5"/>
+          <rect x="72" y="215" width="8" height="6" rx="1" fill="#6a6a8a"/>
+
+          <!-- Pins - right -->
+          <rect x="260" y="115" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="260" y="135" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="260" y="155" width="8" height="6" rx="1" fill="#f560a8"/>
+          <rect x="260" y="175" width="8" height="6" rx="1" fill="#6a6a8a"/>
+          <rect x="260" y="195" width="8" height="6" rx="1" fill="#c8f560"/>
+          <rect x="260" y="215" width="8" height="6" rx="1" fill="#6a6a8a"/>
+
+          <!-- Corner marks -->
+          <circle cx="92" cy="92" r="3" fill="#c8f560" opacity="0.6"/>
+          <circle cx="248" cy="92" r="3" fill="#c8f560" opacity="0.6"/>
+          <circle cx="92" cy="248" r="3" fill="#c8f560" opacity="0.6"/>
+          <circle cx="248" cy="248" r="3" fill="#c8f560" opacity="0.6"/>
+
+          <!-- Trace animation -->
+          <polyline class="chip-trace" points="148,80 148,100" stroke="#c8f560" stroke-width="1" fill="none"/>
+          <polyline class="chip-trace" points="80,141 100,141" stroke="#c8f560" stroke-width="1" fill="none" style="animation-delay:0.3s"/>
+          <polyline class="chip-trace" points="260,201 280,201" stroke="#c8f560" stroke-width="1" fill="none" style="animation-delay:0.6s"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat reveal">
+      <div class="stat-num">5<sup>nm</sup></div>
+      <div class="stat-label">Minimum node worked</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">12</div>
+      <div class="stat-label">Tape-outs completed</div>
+    </div>
+    <div class="stat reveal">
+      <div class="stat-num">3<sup>×</sup></div>
+      <div class="stat-label">Power reduction achieved</div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-text reveal">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">About</h2>
+        <div class="section-line"></div>
+      </div>
+      <p>
+        I'm <strong>Vishnu</strong>, an IC design engineer passionate about bridging the gap between abstract algorithms and physical silicon. My work spans the full design stack — from high-level RTL to transistor-level analog circuits.
+      </p>
+      <p>
+        With deep expertise in <strong>CMOS circuit design</strong>, I specialize in building power-efficient architectures for high-performance applications. I thrive at the intersection of digital and analog — where the real challenges live.
+      </p>
+      <p>
+        Currently focused on <strong>low-power mixed-signal design</strong>, data converters, and PLL architectures for next-generation SoCs. Always chasing that elusive balance between speed, power, and area.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="skills-grid">
+        <div class="skill-cell">
+          <div class="skill-category">Digital Design</div>
+          <div class="skill-items">
+            <span class="skill-tag">RTL / Verilog</span>
+            <span class="skill-tag">SystemVerilog</span>
+            <span class="skill-tag">STA</span>
+            <span class="skill-tag">Clock Gating</span>
+            <span class="skill-tag">FIFO Design</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-category">Analog / Mixed-Signal</div>
+          <div class="skill-items">
+            <span class="skill-tag">CMOS Amplifiers</span>
+            <span class="skill-tag">PLL</span>
+            <span class="skill-tag">ADC / DAC</span>
+            <span class="skill-tag">Bandgap</span>
+            <span class="skill-tag">LDO</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-category">EDA Tools</div>
+          <div class="skill-items">
+            <span class="skill-tag">Cadence Virtuoso</span>
+            <span class="skill-tag">Synopsys DC</span>
+            <span class="skill-tag">Spectre</span>
+            <span class="skill-tag">HSPICE</span>
+            <span class="skill-tag">Magic VLSI</span>
+          </div>
+        </div>
+        <div class="skill-cell">
+          <div class="skill-category">Low Power</div>
+          <div class="skill-items">
+            <span class="skill-tag">Power Gating</span>
+            <span class="skill-tag">Multi-VDD</span>
+            <span class="skill-tag">DVFS</span>
+            <span class="skill-tag">Leakage Opt.</span>
+            <span class="skill-tag">UPF</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-num">P — 001</div>
+        <div class="project-title">10-bit SAR ADC in 180nm CMOS</div>
+        <p class="project-desc">Designed and simulated a 10-bit successive approximation ADC achieving 58dB SNDR at 1MSPS with a power consumption of 280μW from a 1.8V supply.</p>
+        <div class="project-tech">
+          <span class="tech-chip">Cadence Virtuoso</span>
+          <span class="tech-chip">Spectre</span>
+          <span class="tech-chip">180nm CMOS</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">P — 002</div>
+        <div class="project-title">Low-Power Integer-N PLL</div>
+        <p class="project-desc">Implemented a 2.4GHz integer-N PLL with a ring VCO and bang-bang PFD. Achieved phase noise of −110dBc/Hz at 1MHz offset with 4mW total power draw.</p>
+        <div class="project-tech">
+          <span class="tech-chip">HSPICE</span>
+          <span class="tech-chip">90nm</span>
+          <span class="tech-chip">Mixed-Signal</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">P — 003</div>
+        <div class="project-title">RISC-V Core with Clock Gating</div>
+        <p class="project-desc">RTL design of a 5-stage pipelined RISC-V core with fine-grained clock gating and power domain partitioning. Achieved 35% dynamic power reduction vs baseline.</p>
+        <div class="project-tech">
+          <span class="tech-chip">Verilog</span>
+          <span class="tech-chip">Synopsys DC</span>
+          <span class="tech-chip">UPF</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">P — 004</div>
+        <div class="project-title">Folded-Cascode OTA Design</div>
+        <p class="project-desc">High-gain folded-cascode operational transconductance amplifier with 85dB DC gain, 120MHz UGB, and 62° phase margin. Optimized for pipeline ADC driving.</p>
+        <div class="project-tech">
+          <span class="tech-chip">Virtuoso</span>
+          <span class="tech-chip">Spectre</span>
+          <span class="tech-chip">65nm</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">P — 005</div>
+        <div class="project-title">Standard Cell Layout — CMOS Inverter Chain</div>
+        <p class="project-desc">Full custom layout of an inverter chain with DRC/LVS clean verification in Magic VLSI. Achieved minimal parasitic capacitance with careful metal routing.</p>
+        <div class="project-tech">
+          <span class="tech-chip">Magic VLSI</span>
+          <span class="tech-chip">ngspice</span>
+          <span class="tech-chip">Sky130 PDK</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-num">P — 006</div>
+        <div class="project-title">Bandgap Voltage Reference</div>
+        <p class="project-desc">Sub-1V bandgap reference circuit with curvature correction. Output voltage stability of ±2mV over −40°C to 125°C with PSRR of −65dB at 1kHz.</p>
+        <div class="project-tech">
+          <span class="tech-chip">Cadence</span>
+          <span class="tech-chip">BiCMOS</span>
+          <span class="tech-chip">Spectre</span>
+        </div>
+        <div class="project-arrow">↗</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2023 — Present</div>
+        <div class="timeline-role">IC Design Engineer</div>
+        <div class="timeline-company">Semiconductor R&D · Andhra Pradesh, India</div>
+        <p class="timeline-desc">Leading mixed-signal IP development for next-gen SoC platforms. Responsible for ADC/DAC subsystem design, PLL integration, and power architecture definition using multi-voltage domain methodologies.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2022 — 2023</div>
+        <div class="timeline-role">VLSI Design Intern</div>
+        <div class="timeline-company">VLSI Lab · NIT / IIT Research Collaboration</div>
+        <p class="timeline-desc">Worked on low-power digital backend flows, including scan chain insertion, clock tree synthesis, and timing closure for 28nm designs. Hands-on with Synopsys Design Compiler and PrimeTime.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-date">2021 — 2022</div>
+        <div class="timeline-role">Research Assistant — Analog Circuits</div>
+        <div class="timeline-company">University Lab, India</div>
+        <p class="timeline-desc">Researched ultra-low-power analog front-end circuits for biomedical sensing applications. Designed and characterized instrumentation amplifiers with sub-μW power budgets in 180nm CMOS.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-left reveal">
+      <div class="section-header" style="margin-bottom:2rem">
+        <span class="section-num">04</span>
+        <h2 class="section-title" style="font-size:1.2rem">Contact</h2>
+      </div>
+      <h2>Let's build<br><em>something</em><br>remarkable.</h2>
+      <p>Open to IC design roles, research collaborations, and consulting on mixed-signal and low-power VLSI projects.</p>
+      <div class="contact-links">
+        <a href="mailto:vishnu@example.com" class="contact-link">
+          <span class="contact-link-icon">✉</span>
+          vishnu@example.com
+        </a>
+        <a href="https://linkedin.com" target="_blank" class="contact-link">
+          <span class="contact-link-icon">in</span>
+          LinkedIn / Vishnu
+        </a>
+        <a href="https://github.com" target="_blank" class="contact-link">
+          <span class="contact-link-icon">⌥</span>
+          GitHub / vishnu-ic
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" placeholder="Your name" required />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="your@email.com" required />
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea rows="5" placeholder="What are you working on?" required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Message →</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2025 Vishnu — IC Design Engineer</span>
+    <span>Designed with intent · Built in silicon</span>
+    <span>Andhra Pradesh, India</span>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+      cursor.style.transform = `translate(${mx - 6}px, ${my - 6}px)`;
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, button, input, textarea').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.style.transform += ' scale(1.5)'; ring.style.opacity = '1'; });
+      el.addEventListener('mouseleave', () => { ring.style.opacity = '0.5'; });
+    });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // Form submit
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = 'Message Sent ✓';
+      btn.style.background = '#60d5f5';
+      setTimeout(() => { btn.textContent = 'Send Message →'; btn.style.background = ''; e.target.reset(); }, 3000);
+    }
+
+    // Smooth nav highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+      navLinks.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--accent)' : '';
+      });
+    });
+  </script>
+</body>
+</html>
